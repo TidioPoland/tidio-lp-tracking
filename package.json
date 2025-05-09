@@ -1,6 +1,7 @@
 {
   "name": "@TidioPoland/tidio-lp-tracking",
   "version": "0.0.1",
+  "description": "Reusable Amplitude analytics module for Tidio projects.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -13,11 +14,32 @@
     "react": ">=17.0.0"
   },
   "devDependencies": {
-    "@types/amplitude-js": "^8.16.5",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "react": "^18.2.0",
     "@types/node": "^18.0.0",
     "typescript": "^5.8.3"
-  }
+  },
+  "keywords": [
+    "react",
+    "amplitude",
+    "analytics",
+    "tracking",
+    "tidio"
+  ],
+  "author": "Tidio Poland <jedrzej@tidio.net> (https://www.tidio.com)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TidioPoland/tidio-lp-tracking.git"
+  },
+  "bugs": {
+    "url": "https://github.com/TidioPoland/tidio-lp-tracking/issues"
+  },
+  "homepage": "https://github.com/TidioPoland/tidio-lp-tracking#readme",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ]
 }
