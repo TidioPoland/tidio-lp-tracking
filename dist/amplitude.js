@@ -32,7 +32,20 @@ exports.amplitudeInit = amplitudeInit;
 const track = (eventName, eventProperties) => {
     if (typeof window !== 'undefined') {
         const instance = (0, exports.amplitudeInit)();
-        instance === null || instance === void 0 ? void 0 : instance.track(eventName, eventProperties);
+        if (instance) {
+            const defaultProperties = {
+                category: (0, utils_1.getCategoryFromDomain)(),
+                page_path: window.location.pathname,
+                page_url: window.location.href,
+                referrer: document.referrer || undefined, // Ensure referrer is string or undefined
+                breakpoint: (0, utils_1.getBreakpoint)()
+            };
+            const finalEventProperties = Object.assign(Object.assign({}, defaultProperties), eventProperties);
+            instance.track(eventName, finalEventProperties);
+        }
+        else {
+            console.warn("Amplitude instance not available for tracking event:", eventName);
+        }
     }
 };
 exports.track = track;

@@ -37,7 +37,24 @@ export const amplitudeInit = (apiKey?: string) => {
 export const track = (eventName: string, eventProperties?: Record<string, any>) => {
     if (typeof window !== 'undefined') {
         const instance = amplitudeInit();
-        instance?.track(eventName, eventProperties);
+        if (instance) {
+            const defaultProperties = {
+                category: getCategoryFromDomain(),
+                page_path: window.location.pathname,
+                page_url: window.location.href,
+                referrer: document.referrer || undefined, // Ensure referrer is string or undefined
+                breakpoint: getBreakpoint()
+            };
+
+            const finalEventProperties = {
+                ...defaultProperties,
+                ...eventProperties
+            };
+
+            instance.track(eventName, finalEventProperties);
+        } else {
+            console.warn("Amplitude instance not available for tracking event:", eventName);
+        }
     }
 };
 
