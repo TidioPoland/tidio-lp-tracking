@@ -12,7 +12,8 @@
     "strict": true,
     "esModuleInterop": true,
     "jsx": "react-jsx",
-    "declaration": true
+    "declaration": true,
+    "skipLibCheck": true
   },
   "include": [
     "src"

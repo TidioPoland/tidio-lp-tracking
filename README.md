@@ -1,6 +1,6 @@
 # @TidioPoland/tidio-lp-tracking
 
-Reusable analytics module for Tidio projects using Amplitude.
+Reusable analytics module for Tidio projects builded on Next.js using Amplitude.
 
 ## Features
 
