@@ -194,6 +194,33 @@ This package maps Cookiebot categories to analytics:
 - **Preferences**: Available for preference-related tracking (available via `hasPreferencesConsent()`)
 - **Necessary**: Always allowed (not checked for analytics)
 
+## Hide Cookiebot Branding
+
+The `CookiebotStyleProvider` automatically hides the "Powered by Cybot" branding from the consent banner:
+
+```tsx
+import { CookiebotScript, CookiebotStyleProvider } from '@TidioPoland/tidio-lp-tracking';
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <head>
+        <CookiebotScript />
+        <CookiebotStyleProvider />
+      </head>
+      <body>{children}</body>
+    </html>
+  );
+}
+```
+
+This component automatically applies:
+```css
+#CybotCookiebotDialogPoweredbyCybot {
+    display: none !important;
+}
+```
+
 ## Note on Page View Tracking
 
 The `AnalyticsProvider` automatically tracks an initial page view when it loads **and the user has consented**.

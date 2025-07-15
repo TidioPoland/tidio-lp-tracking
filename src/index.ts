@@ -1,6 +1,7 @@
 export { AnalyticsProvider } from "./AnalyticsProvider";
 export { useAnalytics } from "./useAnalytics";
 export { CookiebotScript } from "./CookiebotScript";
+export { CookiebotStyleProvider } from "./CookiebotStyleProvider";
 export {
     track,
     trackPageView,

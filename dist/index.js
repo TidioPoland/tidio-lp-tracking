@@ -1,12 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.onConsentChanged = exports.getConsentId = exports.isCookiebotLoaded = exports.hasPreferencesConsent = exports.hasMarketingConsent = exports.hasAnalyticsConsent = exports.setUserProperties = exports.setUserId = exports.trackCTAClick = exports.trackPageView = exports.track = exports.CookiebotScript = exports.useAnalytics = exports.AnalyticsProvider = void 0;
+exports.onConsentChanged = exports.getConsentId = exports.isCookiebotLoaded = exports.hasPreferencesConsent = exports.hasMarketingConsent = exports.hasAnalyticsConsent = exports.setUserProperties = exports.setUserId = exports.trackCTAClick = exports.trackPageView = exports.track = exports.CookiebotStyleProvider = exports.CookiebotScript = exports.useAnalytics = exports.AnalyticsProvider = void 0;
 var AnalyticsProvider_1 = require("./AnalyticsProvider");
 Object.defineProperty(exports, "AnalyticsProvider", { enumerable: true, get: function () { return AnalyticsProvider_1.AnalyticsProvider; } });
 var useAnalytics_1 = require("./useAnalytics");
 Object.defineProperty(exports, "useAnalytics", { enumerable: true, get: function () { return useAnalytics_1.useAnalytics; } });
 var CookiebotScript_1 = require("./CookiebotScript");
 Object.defineProperty(exports, "CookiebotScript", { enumerable: true, get: function () { return CookiebotScript_1.CookiebotScript; } });
+var CookiebotStyleProvider_1 = require("./CookiebotStyleProvider");
+Object.defineProperty(exports, "CookiebotStyleProvider", { enumerable: true, get: function () { return CookiebotStyleProvider_1.CookiebotStyleProvider; } });
 var amplitude_1 = require("./amplitude");
 Object.defineProperty(exports, "track", { enumerable: true, get: function () { return amplitude_1.track; } });
 Object.defineProperty(exports, "trackPageView", { enumerable: true, get: function () { return amplitude_1.trackPageView; } });

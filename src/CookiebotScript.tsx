@@ -18,7 +18,7 @@ interface CookiebotScriptProps {
 
 export const CookiebotScript = ({
     dataCbid = "8776d47d-b119-406e-b740-75e92a9bb6c7",
-    dataGeoregions = "{'region':'US','cbid':'413d7e56-4be1-412e-9e11-166a1381b987'}",
+    dataGeoregions = "{'region':'US','cbid':'968102f8-faa9-4a36-b62d-fd80106ae2ec'}",
     locale
 }: CookiebotScriptProps) => {
     return (
