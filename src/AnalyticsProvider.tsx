@@ -2,6 +2,7 @@
 import { ReactNode, useEffect, useRef } from "react";
 import { amplitudeInit, trackPageView } from "./amplitude";
 import { usePathname } from "next/navigation";
+import { onConsentChanged, hasAnalyticsConsent } from "./cookiebot";
 
 interface AnalyticsProviderProps {
     apiKey: string;
@@ -17,9 +18,21 @@ export const AnalyticsProvider = ({ apiKey, children }: AnalyticsProviderProps) 
         // Initialize Amplitude
         amplitudeInit(apiKey);
 
-        // Track initial page view
+        // Track initial page view only if consent is granted
         trackPageView();
     }, [apiKey]);
+
+    // Listen for consent changes and track initial page view when consent is granted
+    useEffect(() => {
+        const cleanup = onConsentChanged(() => {
+            // When consent changes, if analytics consent is now granted, track the current page
+            if (hasAnalyticsConsent()) {
+                trackPageView();
+            }
+        });
+
+        return cleanup;
+    }, []);
 
     // Track when pathname changes for SPA navigation
     useEffect(() => {

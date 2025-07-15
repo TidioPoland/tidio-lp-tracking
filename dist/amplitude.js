@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.trackCTAClick = exports.setUserProperties = exports.setUserId = exports.trackPageView = exports.track = exports.amplitudeInit = void 0;
 const analytics_browser_1 = require("@amplitude/analytics-browser");
 const utils_1 = require("./utils");
+const cookiebot_1 = require("./cookiebot");
 // Store the Amplitude instance globally
 let amplitudeInstance = null;
 let initialized = false;
@@ -31,6 +32,11 @@ exports.amplitudeInit = amplitudeInit;
 // Helper to track events
 const track = (eventName, eventProperties) => {
     if (typeof window !== 'undefined') {
+        // Check for analytics consent before tracking
+        if (!(0, cookiebot_1.hasAnalyticsConsent)()) {
+            console.debug("Analytics consent not granted. Skipping event tracking:", eventName);
+            return;
+        }
         const instance = (0, exports.amplitudeInit)();
         if (instance) {
             const defaultProperties = {
@@ -52,6 +58,11 @@ exports.track = track;
 // Track page view event
 const trackPageView = () => {
     if (typeof window !== 'undefined') {
+        // Check for analytics consent before tracking
+        if (!(0, cookiebot_1.hasAnalyticsConsent)()) {
+            console.debug("Analytics consent not granted. Skipping page view tracking.");
+            return;
+        }
         const instance = (0, exports.amplitudeInit)();
         if (instance) {
             // Get current page information
@@ -73,6 +84,11 @@ exports.trackPageView = trackPageView;
 // Helper to set user ID
 const setUserId = (userId) => {
     if (typeof window !== 'undefined') {
+        // Check for analytics consent before setting user ID
+        if (!(0, cookiebot_1.hasAnalyticsConsent)()) {
+            console.debug("Analytics consent not granted. Skipping user ID setting.");
+            return;
+        }
         const instance = (0, exports.amplitudeInit)();
         instance === null || instance === void 0 ? void 0 : instance.setUserId(userId);
     }
@@ -81,6 +97,11 @@ exports.setUserId = setUserId;
 // Helper to set user properties
 const setUserProperties = (properties) => {
     if (typeof window !== 'undefined') {
+        // Check for analytics consent before setting user properties
+        if (!(0, cookiebot_1.hasAnalyticsConsent)()) {
+            console.debug("Analytics consent not granted. Skipping user properties setting.");
+            return;
+        }
         const instance = (0, exports.amplitudeInit)();
         // Create identify object and set properties
         const identify = new analytics_browser_1.Identify();
@@ -95,6 +116,11 @@ exports.setUserProperties = setUserProperties;
 // Track CTA click event
 const trackCTAClick = (ctaPosition, ctaText) => {
     if (typeof window !== 'undefined') {
+        // Check for analytics consent before tracking
+        if (!(0, cookiebot_1.hasAnalyticsConsent)()) {
+            console.debug("Analytics consent not granted. Skipping CTA click tracking.");
+            return;
+        }
         const instance = (0, exports.amplitudeInit)();
         if (instance) {
             const pagePath = window.location.pathname;

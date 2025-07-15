@@ -1,6 +1,6 @@
 # @TidioPoland/tidio-lp-tracking
 
-Reusable analytics module for Tidio projects builded on Next.js using Amplitude.
+Reusable analytics module for Tidio projects builded on Next.js using Amplitude with GDPR-compliant Cookiebot integration.
 
 ## Features
 
@@ -8,6 +8,8 @@ Reusable analytics module for Tidio projects builded on Next.js using Amplitude.
 - Provides an `AnalyticsProvider` to initialize Amplitude.
 - Offers a `useAnalytics` hook for common tracking events.
 - Exports individual tracking functions for more granular control.
+- **GDPR Compliance**: Built-in Cookiebot integration ensures analytics only runs when users consent to cookies.
+- **Automatic Consent Handling**: Analytics automatically respects user consent choices and updates when consent changes.
 
 ## Installation
 
@@ -19,9 +21,41 @@ yarn add @TidioPoland/tidio-lp-tracking
 
 ## Setup & Usage
 
-1.  **Wrap your application (or relevant part) with `AnalyticsProvider`**:
+### Basic Setup (with Cookiebot GDPR Compliance)
 
-    You need to provide your Amplitude API key to the `AnalyticsProvider`.
+1.  **Add Cookiebot Script to your app**: 
+
+    Add the `CookiebotScript` component to your Next.js app layout or _app.tsx. This should be placed as high as possible in your component tree:
+
+    ```tsx
+    // Example: app/layout.tsx (App Router) or _app.tsx (Pages Router)
+    import { CookiebotScript } from '@TidioPoland/tidio-lp-tracking';
+
+    export default function RootLayout({
+      children,
+    }: {
+      children: React.ReactNode;
+    }) {
+      return (
+        <html lang="en">
+          <head>
+            <CookiebotScript 
+              // Optional: pass locale if you want to set it explicitly
+              locale="en-US"
+              // Optional: custom Cookiebot configuration (defaults provided)
+              dataCbid="861c1b39-c9d3-4683-8e87-f8bfdf277ab2"
+              dataGeoregions="{'region':'US','cbid':'413d7e56-4be1-412e-9e11-166a1381b987'}"
+            />
+          </head>
+          <body>{children}</body>
+        </html>
+      );
+    }
+    ```
+
+2.  **Wrap your application with `AnalyticsProvider`**:
+
+    The `AnalyticsProvider` now automatically respects Cookiebot consent and will only track when the user has agreed to analytics cookies:
 
     ```tsx
     // Example: App.tsx or _app.tsx
@@ -39,6 +73,11 @@ yarn add @TidioPoland/tidio-lp-tracking
 
     export default MyApp;
     ```
+
+    **Important**: Analytics will automatically:
+    - ✅ **Not track** if user hasn't consented or declined analytics cookies
+    - ✅ **Start tracking** when user accepts analytics cookies  
+    - ✅ **Stop tracking** if user changes their mind and declines analytics cookies
 
 2.  **Using the `useAnalytics` hook in your components**:
 
@@ -65,25 +104,102 @@ yarn add @TidioPoland/tidio-lp-tracking
 
 ## Available Functions
 
-The core tracking logic resides in `src/amplitude.ts`. The following functions are available through the `useAnalytics` hook or can be imported directly:
+### Analytics Functions (GDPR-Compliant)
 
--   `trackEvent(eventName, eventProperties)`: Track custom events (via `useAnalytics`).
--   `identifyUser(userId)`: Set the user ID for tracking (via `useAnalytics` as `identifyUser`).
--   `setUserProps(properties)`: Set user properties (via `useAnalytics` as `setUserProps`).
--   `logPageView()`: Track a page view (via `useAnalytics` or automatically on provider load).
--   `logCTAClick(position, ctaText)`: Track a CTA click event (via `useAnalytics`).
+All analytics functions automatically respect Cookiebot consent. If the user hasn't consented to analytics cookies, these functions will silently skip tracking:
 
-Additionally, you can import more specific functions directly if needed:
+**Via `useAnalytics` hook:**
+-   `trackEvent(eventName, eventProperties)`: Track custom events
+-   `identifyUser(userId)`: Set the user ID for tracking
+-   `setUserProps(properties)`: Set user properties  
+-   `logPageView()`: Track a page view
+-   `logCTAClick(position, ctaText)`: Track a CTA click event
+
+**Direct imports:**
 - `track(eventName, eventProperties)`
 - `trackPageView()`
 - `trackCTAClick(ctaPosition, ctaText)`
 - `setUserId(userId)`
 - `setUserProperties(properties)`
 
+### Consent Management Functions
+
+For advanced use cases, you can check consent status manually:
+
+```tsx
+import { 
+  hasAnalyticsConsent, 
+  hasMarketingConsent, 
+  hasPreferencesConsent,
+  isCookiebotLoaded,
+  getConsentId,
+  onConsentChanged
+} from '@TidioPoland/tidio-lp-tracking';
+
+// Check if user has consented to analytics
+if (hasAnalyticsConsent()) {
+  // Safe to track analytics
+}
+
+// Listen for consent changes
+useEffect(() => {
+  const cleanup = onConsentChanged(() => {
+    console.log('User updated their consent preferences');
+    if (hasAnalyticsConsent()) {
+      // User just accepted analytics
+    }
+  });
+  return cleanup;
+}, []);
+```
+
+**Available consent functions:**
+- `hasAnalyticsConsent()`: Returns `true` if user consented to statistics/analytics cookies
+- `hasMarketingConsent()`: Returns `true` if user consented to marketing cookies  
+- `hasPreferencesConsent()`: Returns `true` if user consented to preference cookies
+- `isCookiebotLoaded()`: Returns `true` if Cookiebot has loaded and user has responded
+- `getConsentId()`: Returns the Cookiebot consent ID (for audit trails)
+- `onConsentChanged(callback)`: Listen for consent changes (returns cleanup function)
+
+## Cookiebot Configuration
+
+### Default Configuration
+
+The `CookiebotScript` comes with sensible defaults:
+
+```tsx
+<CookiebotScript />
+```
+
+This uses:
+- **data-cbid**: `"861c1b39-c9d3-4683-8e87-f8bfdf277ab2"`
+- **data-georegions**: `"{'region':'US','cbid':'413d7e56-4be1-412e-9e11-166a1381b987'}"`
+- **data-culture**: Auto-detected (or pass `locale` prop)
+
+### Custom Configuration  
+
+```tsx
+<CookiebotScript 
+  dataCbid="your-custom-cookiebot-id"
+  dataGeoregions="{'region':'EU','cbid':'your-eu-cookiebot-id'}"
+  locale="en-GB"
+/>
+```
+
+### Cookie Categories
+
+This package maps Cookiebot categories to analytics:
+- **Statistics/Analytics**: Required for all Amplitude tracking
+- **Marketing**: Could be used for marketing-specific events (available via `hasMarketingConsent()`)
+- **Preferences**: Available for preference-related tracking (available via `hasPreferencesConsent()`)
+- **Necessary**: Always allowed (not checked for analytics)
+
 ## Note on Page View Tracking
 
-The `AnalyticsProvider` automatically tracks an initial page view when it loads.
-If you are building a Single Page Application (SPA) and need to track page views on route changes, you will need to call `logPageView()` (from `useAnalytics`) or `trackPageView()` (direct import) manually after each route change. The provider no longer uses Next.js specific hooks for automatic SPA route change tracking.
+The `AnalyticsProvider` automatically tracks an initial page view when it loads **and the user has consented**.
+- If you are building a Single Page Application (SPA), the provider automatically tracks route changes
+- Page views are only tracked when `hasAnalyticsConsent()` returns `true`
+- When a user initially accepts consent, the current page view is automatically tracked
 
 ## Creating a Custom `TrackingLink` for Next.js (Optional)
 

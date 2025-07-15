@@ -6,6 +6,7 @@ const jsx_runtime_1 = require("react/jsx-runtime");
 const react_1 = require("react");
 const amplitude_1 = require("./amplitude");
 const navigation_1 = require("next/navigation");
+const cookiebot_1 = require("./cookiebot");
 const AnalyticsProvider = ({ apiKey, children }) => {
     const pathname = (0, navigation_1.usePathname)();
     const lastPathname = (0, react_1.useRef)(null);
@@ -13,9 +14,19 @@ const AnalyticsProvider = ({ apiKey, children }) => {
     (0, react_1.useEffect)(() => {
         // Initialize Amplitude
         (0, amplitude_1.amplitudeInit)(apiKey);
-        // Track initial page view
+        // Track initial page view only if consent is granted
         (0, amplitude_1.trackPageView)();
     }, [apiKey]);
+    // Listen for consent changes and track initial page view when consent is granted
+    (0, react_1.useEffect)(() => {
+        const cleanup = (0, cookiebot_1.onConsentChanged)(() => {
+            // When consent changes, if analytics consent is now granted, track the current page
+            if ((0, cookiebot_1.hasAnalyticsConsent)()) {
+                (0, amplitude_1.trackPageView)();
+            }
+        });
+        return cleanup;
+    }, []);
     // Track when pathname changes for SPA navigation
     (0, react_1.useEffect)(() => {
         // Skip the first render if pathname hasn't changed from initial (or if it's the very first render where lastPathname.current is null)

@@ -1,5 +1,6 @@
 import { createInstance, Types, Identify } from '@amplitude/analytics-browser';
 import {getBreakpoint, getCategoryFromDomain} from "./utils";
+import { hasAnalyticsConsent } from "./cookiebot";
 
 // Store the Amplitude instance globally
 let amplitudeInstance: ReturnType<typeof createInstance> | null = null;
@@ -36,6 +37,12 @@ export const amplitudeInit = (apiKey?: string) => {
 // Helper to track events
 export const track = (eventName: string, eventProperties?: Record<string, any>) => {
     if (typeof window !== 'undefined') {
+        // Check for analytics consent before tracking
+        if (!hasAnalyticsConsent()) {
+            console.debug("Analytics consent not granted. Skipping event tracking:", eventName);
+            return;
+        }
+
         const instance = amplitudeInit();
         if (instance) {
             const defaultProperties = {
@@ -61,6 +68,12 @@ export const track = (eventName: string, eventProperties?: Record<string, any>) 
 // Track page view event
 export const trackPageView = () => {
     if (typeof window !== 'undefined') {
+        // Check for analytics consent before tracking
+        if (!hasAnalyticsConsent()) {
+            console.debug("Analytics consent not granted. Skipping page view tracking.");
+            return;
+        }
+
         const instance = amplitudeInit();
 
         if (instance) {
@@ -85,6 +98,12 @@ export const trackPageView = () => {
 // Helper to set user ID
 export const setUserId = (userId: string) => {
     if (typeof window !== 'undefined') {
+        // Check for analytics consent before setting user ID
+        if (!hasAnalyticsConsent()) {
+            console.debug("Analytics consent not granted. Skipping user ID setting.");
+            return;
+        }
+
         const instance = amplitudeInit();
         instance?.setUserId(userId);
     }
@@ -93,6 +112,12 @@ export const setUserId = (userId: string) => {
 // Helper to set user properties
 export const setUserProperties = (properties: Record<string, any>) => {
     if (typeof window !== 'undefined') {
+        // Check for analytics consent before setting user properties
+        if (!hasAnalyticsConsent()) {
+            console.debug("Analytics consent not granted. Skipping user properties setting.");
+            return;
+        }
+
         const instance = amplitudeInit();
 
         // Create identify object and set properties
@@ -110,6 +135,12 @@ export const setUserProperties = (properties: Record<string, any>) => {
 // Track CTA click event
 export const trackCTAClick = (ctaPosition: string, ctaText: string) => {
     if (typeof window !== 'undefined') {
+        // Check for analytics consent before tracking
+        if (!hasAnalyticsConsent()) {
+            console.debug("Analytics consent not granted. Skipping CTA click tracking.");
+            return;
+        }
+
         const instance = amplitudeInit();
         if (instance) {
             const pagePath = window.location.pathname;
