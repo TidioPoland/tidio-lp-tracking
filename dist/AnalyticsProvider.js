@@ -10,19 +10,26 @@ const cookiebot_1 = require("./cookiebot");
 const AnalyticsProvider = ({ apiKey, children }) => {
     const pathname = (0, navigation_1.usePathname)();
     const lastPathname = (0, react_1.useRef)(null);
-    // Initialize and track first page view
+    const hasTrackedInitialPageView = (0, react_1.useRef)(false);
+    // Initialize Amplitude
     (0, react_1.useEffect)(() => {
-        // Initialize Amplitude
         (0, amplitude_1.amplitudeInit)(apiKey);
-        // Track initial page view only if consent is granted
-        (0, amplitude_1.trackPageView)();
     }, [apiKey]);
+    // Track initial page view only when consent is available and granted
+    (0, react_1.useEffect)(() => {
+        // Only track if we haven't tracked the initial page view yet and consent is granted
+        if (!hasTrackedInitialPageView.current && (0, cookiebot_1.hasAnalyticsConsent)()) {
+            (0, amplitude_1.trackPageView)();
+            hasTrackedInitialPageView.current = true;
+        }
+    }, []);
     // Listen for consent changes and track initial page view when consent is granted
     (0, react_1.useEffect)(() => {
         const cleanup = (0, cookiebot_1.onConsentChanged)(() => {
-            // When consent changes, if analytics consent is now granted, track the current page
-            if ((0, cookiebot_1.hasAnalyticsConsent)()) {
+            // When consent changes, if analytics consent is now granted and we haven't tracked initial page view
+            if ((0, cookiebot_1.hasAnalyticsConsent)() && !hasTrackedInitialPageView.current) {
                 (0, amplitude_1.trackPageView)();
+                hasTrackedInitialPageView.current = true;
             }
         });
         return cleanup;
@@ -30,7 +37,7 @@ const AnalyticsProvider = ({ apiKey, children }) => {
     // Track when pathname changes for SPA navigation
     (0, react_1.useEffect)(() => {
         // Skip the first render if pathname hasn't changed from initial (or if it's the very first render where lastPathname.current is null)
-        // The initial page view is handled by the first useEffect.
+        // The initial page view is handled by the effects above.
         if (lastPathname.current !== null && pathname !== lastPathname.current) {
             (0, amplitude_1.trackPageView)();
         }

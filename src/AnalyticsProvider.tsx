@@ -12,22 +12,29 @@ interface AnalyticsProviderProps {
 export const AnalyticsProvider = ({ apiKey, children }: AnalyticsProviderProps) => {
     const pathname = usePathname();
     const lastPathname = useRef<string | null>(null);
+    const hasTrackedInitialPageView = useRef<boolean>(false);
 
-    // Initialize and track first page view
+    // Initialize Amplitude
     useEffect(() => {
-        // Initialize Amplitude
         amplitudeInit(apiKey);
-
-        // Track initial page view only if consent is granted
-        trackPageView();
     }, [apiKey]);
+
+    // Track initial page view only when consent is available and granted
+    useEffect(() => {
+        // Only track if we haven't tracked the initial page view yet and consent is granted
+        if (!hasTrackedInitialPageView.current && hasAnalyticsConsent()) {
+            trackPageView();
+            hasTrackedInitialPageView.current = true;
+        }
+    }, []);
 
     // Listen for consent changes and track initial page view when consent is granted
     useEffect(() => {
         const cleanup = onConsentChanged(() => {
-            // When consent changes, if analytics consent is now granted, track the current page
-            if (hasAnalyticsConsent()) {
+            // When consent changes, if analytics consent is now granted and we haven't tracked initial page view
+            if (hasAnalyticsConsent() && !hasTrackedInitialPageView.current) {
                 trackPageView();
+                hasTrackedInitialPageView.current = true;
             }
         });
 
@@ -37,7 +44,7 @@ export const AnalyticsProvider = ({ apiKey, children }: AnalyticsProviderProps) 
     // Track when pathname changes for SPA navigation
     useEffect(() => {
         // Skip the first render if pathname hasn't changed from initial (or if it's the very first render where lastPathname.current is null)
-        // The initial page view is handled by the first useEffect.
+        // The initial page view is handled by the effects above.
         if (lastPathname.current !== null && pathname !== lastPathname.current) {
             trackPageView();
         }
