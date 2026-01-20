@@ -17,6 +17,7 @@ export const AnalyticsProvider = ({ apiKey, children, logLevel }: AnalyticsProvi
     const hasTrackedInitialPageView = useRef<boolean>(false);
 
     // Initialize Amplitude
+    // Note: logLevel is only applied on initial mount and cannot be changed afterward
     useEffect(() => {
         amplitudeInit(apiKey, logLevel);
     }, [apiKey, logLevel]);

@@ -12,6 +12,7 @@ const AnalyticsProvider = ({ apiKey, children, logLevel }) => {
     const lastPathname = (0, react_1.useRef)(null);
     const hasTrackedInitialPageView = (0, react_1.useRef)(false);
     // Initialize Amplitude
+    // Note: logLevel is only applied on initial mount and cannot be changed afterward
     (0, react_1.useEffect)(() => {
         (0, amplitude_1.amplitudeInit)(apiKey, logLevel);
     }, [apiKey, logLevel]);

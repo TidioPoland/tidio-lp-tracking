@@ -79,6 +79,42 @@ yarn add @TidioPoland/tidio-lp-tracking
     - ✅ **Start tracking** when user accepts analytics cookies  
     - ✅ **Stop tracking** if user changes their mind and declines analytics cookies
 
+### Configuring Log Level
+
+You can optionally control the Amplitude log verbosity by passing a `logLevel` prop to `AnalyticsProvider`:
+
+```tsx
+import { AnalyticsProvider } from '@TidioPoland/tidio-lp-tracking';
+import { Types } from '@amplitude/analytics-browser';
+
+function MyApp({ Component, pageProps }) {
+  return (
+    <AnalyticsProvider 
+      apiKey={AMPLITUDE_API_KEY}
+      logLevel={Types.LogLevel.None} // Disable all Amplitude logs
+    >
+      <Component {...pageProps} />
+    </AnalyticsProvider>
+  );
+}
+```
+
+**Available log levels:**
+- `Types.LogLevel.None` - No logs (silent mode)
+- `Types.LogLevel.Error` - Only errors
+- `Types.LogLevel.Warn` - Warnings and errors (default in production)
+- `Types.LogLevel.Debug` - Debug information (default in development)
+- `Types.LogLevel.Verbose` - All logs including verbose debug info
+
+**Default behavior** (when `logLevel` is not specified):
+- **Development**: `Types.LogLevel.Debug` - shows all tracking events and debug info
+- **Production**: `Types.LogLevel.Warn` - only shows warnings and errors
+
+**Important notes:**
+- ⚠️ The `logLevel` is applied **only on initial mount** and cannot be changed afterward
+- ⚠️ Changing the `logLevel` prop after initialization will log a warning but will not take effect
+- ✅ Set `logLevel` to a stable value at the app level for consistent behavior
+
 2.  **Using the `useAnalytics` hook in your components**:
 
     ```tsx

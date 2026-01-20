@@ -5,32 +5,48 @@ import { hasAnalyticsConsent } from "./cookiebot";
 // Store the Amplitude instance globally
 let amplitudeInstance: ReturnType<typeof createInstance> | null = null;
 let initialized = false;
+let initialLogLevel: Types.LogLevel | undefined;
 
 // Initialize Amplitude with your API key
 export const amplitudeInit = (apiKey?: string, logLevel?: Types.LogLevel) => {
+    if (typeof window === 'undefined') {
+        return null;
+    }
+
     // Only initialize once
-    if (!initialized && typeof window !== 'undefined') {
+    if (!initialized) {
         if (!apiKey) {
             console.warn("Amplitude API Key not provided to amplitudeInit.");
             return null;
         }
+        
+        const resolvedLogLevel = logLevel ?? (
+            process.env.NODE_ENV === 'production'
+                ? Types.LogLevel.Warn
+                : Types.LogLevel.Debug
+        );
+        
         amplitudeInstance = createInstance();
 
         amplitudeInstance.init(
             apiKey, // Use the provided apiKey
             undefined,
             {
-                logLevel: logLevel ?? (
-                    process.env.NODE_ENV === 'production'
-                        ? Types.LogLevel.Warn
-                        : Types.LogLevel.Debug
-                ),
+                logLevel: resolvedLogLevel,
                 defaultTracking: false,
                 autocapture: false
             }
         );
 
+        initialLogLevel = resolvedLogLevel;
         initialized = true;
+    } else if (logLevel !== undefined && logLevel !== initialLogLevel) {
+        // Warn if logLevel is changed after initialization
+        console.warn(
+            `Amplitude logLevel cannot be changed after initialization. ` +
+            `Initial logLevel: ${initialLogLevel}, Attempted logLevel: ${logLevel}. ` +
+            `The logLevel prop should remain stable throughout the application lifecycle.`
+        );
     }
 
     return amplitudeInstance;
