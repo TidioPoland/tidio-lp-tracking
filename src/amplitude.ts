@@ -7,7 +7,7 @@ let amplitudeInstance: ReturnType<typeof createInstance> | null = null;
 let initialized = false;
 
 // Initialize Amplitude with your API key
-export const amplitudeInit = (apiKey?: string) => {
+export const amplitudeInit = (apiKey?: string, logLevel?: Types.LogLevel) => {
     // Only initialize once
     if (!initialized && typeof window !== 'undefined') {
         if (!apiKey) {
@@ -20,9 +20,11 @@ export const amplitudeInit = (apiKey?: string) => {
             apiKey, // Use the provided apiKey
             undefined,
             {
-                logLevel: process.env.NODE_ENV === 'production'
-                    ? Types.LogLevel.Warn
-                    : Types.LogLevel.Debug,
+                logLevel: logLevel ?? (
+                    process.env.NODE_ENV === 'production'
+                        ? Types.LogLevel.Warn
+                        : Types.LogLevel.Debug
+                ),
                 defaultTracking: false,
                 autocapture: false
             }

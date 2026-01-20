@@ -3,21 +3,23 @@ import { ReactNode, useEffect, useRef } from "react";
 import { amplitudeInit, trackPageView } from "./amplitude";
 import { usePathname } from "next/navigation";
 import { onConsentChanged, hasAnalyticsConsent } from "./cookiebot";
+import { Types } from "@amplitude/analytics-browser";
 
 interface AnalyticsProviderProps {
     apiKey: string;
     children: ReactNode;
+    logLevel?: Types.LogLevel;
 }
 
-export const AnalyticsProvider = ({ apiKey, children }: AnalyticsProviderProps) => {
+export const AnalyticsProvider = ({ apiKey, children, logLevel }: AnalyticsProviderProps) => {
     const pathname = usePathname();
     const lastPathname = useRef<string | null>(null);
     const hasTrackedInitialPageView = useRef<boolean>(false);
 
     // Initialize Amplitude
     useEffect(() => {
-        amplitudeInit(apiKey);
-    }, [apiKey]);
+        amplitudeInit(apiKey, logLevel);
+    }, [apiKey, logLevel]);
 
     // Track initial page view only when consent is available and granted
     useEffect(() => {

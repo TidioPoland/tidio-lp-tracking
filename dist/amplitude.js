@@ -8,7 +8,7 @@ const cookiebot_1 = require("./cookiebot");
 let amplitudeInstance = null;
 let initialized = false;
 // Initialize Amplitude with your API key
-const amplitudeInit = (apiKey) => {
+const amplitudeInit = (apiKey, logLevel) => {
     // Only initialize once
     if (!initialized && typeof window !== 'undefined') {
         if (!apiKey) {
@@ -18,9 +18,9 @@ const amplitudeInit = (apiKey) => {
         amplitudeInstance = (0, analytics_browser_1.createInstance)();
         amplitudeInstance.init(apiKey, // Use the provided apiKey
         undefined, {
-            logLevel: process.env.NODE_ENV === 'production'
+            logLevel: logLevel !== null && logLevel !== void 0 ? logLevel : (process.env.NODE_ENV === 'production'
                 ? analytics_browser_1.Types.LogLevel.Warn
-                : analytics_browser_1.Types.LogLevel.Debug,
+                : analytics_browser_1.Types.LogLevel.Debug),
             defaultTracking: false,
             autocapture: false
         });

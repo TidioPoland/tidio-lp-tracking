@@ -7,14 +7,14 @@ const react_1 = require("react");
 const amplitude_1 = require("./amplitude");
 const navigation_1 = require("next/navigation");
 const cookiebot_1 = require("./cookiebot");
-const AnalyticsProvider = ({ apiKey, children }) => {
+const AnalyticsProvider = ({ apiKey, children, logLevel }) => {
     const pathname = (0, navigation_1.usePathname)();
     const lastPathname = (0, react_1.useRef)(null);
     const hasTrackedInitialPageView = (0, react_1.useRef)(false);
     // Initialize Amplitude
     (0, react_1.useEffect)(() => {
-        (0, amplitude_1.amplitudeInit)(apiKey);
-    }, [apiKey]);
+        (0, amplitude_1.amplitudeInit)(apiKey, logLevel);
+    }, [apiKey, logLevel]);
     // Track initial page view only when consent is available and granted
     (0, react_1.useEffect)(() => {
         // Only track if we haven't tracked the initial page view yet and consent is granted
