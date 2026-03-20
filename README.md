@@ -1,12 +1,13 @@
 # @TidioPoland/tidio-lp-tracking
 
-Reusable analytics module for Tidio projects builded on Next.js using Amplitude with GDPR-compliant Cookiebot integration.
+Reusable analytics module for Tidio projects built on Next.js. Supports Amplitude event tracking and Google Analytics data layer (GTM), both with GDPR-compliant Cookiebot integration.
 
 ## Features
 
 - Easy integration with React projects.
 - Provides an `AnalyticsProvider` to initialize Amplitude.
-- Offers a `useAnalytics` hook for common tracking events.
+- Offers a `useAnalytics` hook for Amplitude event tracking.
+- Offers a `useGoogleAnalytics` hook for pushing events to the GTM data layer.
 - Exports individual tracking functions for more granular control.
 - **GDPR Compliance**: Built-in Cookiebot integration ensures analytics only runs when users consent to cookies.
 - **Automatic Consent Handling**: Analytics automatically respects user consent choices and updates when consent changes.
@@ -138,11 +139,86 @@ function MyApp({ Component, pageProps }) {
     }
     ```
 
+## Google Analytics (Data Layer)
+
+The library provides a `useGoogleAnalytics` hook and a standalone `sendEventToGoogleAnalytics` function for pushing events to `window.dataLayer` (e.g. for use with Google Tag Manager).
+
+Both respect Cookiebot consent — events are silently dropped when `hasAnalyticsConsent()` returns `false`.
+
+### Using the `useGoogleAnalytics` hook
+
+```tsx
+import { useGoogleAnalytics } from '@TidioPoland/tidio-lp-tracking';
+
+function MyComponent() {
+  const { sendGAEvent } = useGoogleAnalytics();
+
+  const handleClick = () => {
+    sendGAEvent(
+      {
+        gaEvent: 'cta_click',
+        gaCategory: 'homepage',
+        gaAction: 'click',
+        gaLabel: 'hero_button',
+      },
+      // Optional extra properties merged into the dataLayer push:
+      { userId: 'user-123', plan: 'premium' },
+    );
+  };
+
+  return <button onClick={handleClick}>Get started</button>;
+}
+```
+
+### Using `sendEventToGoogleAnalytics` directly
+
+```tsx
+import { sendEventToGoogleAnalytics } from '@TidioPoland/tidio-lp-tracking';
+
+sendEventToGoogleAnalytics(
+  {
+    gaEvent: 'form_submit',
+    gaCategory: 'contact',
+    gaAction: 'submit',
+    gaLabel: 'footer_form',
+  },
+  { userId: 'user-123' },
+);
+```
+
+### `GoogleAnalyticsEventData` type
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `gaEvent` | `string` | ✅ | GTM event name (maps to `event` in the dataLayer push) |
+| `gaCategory` | `string` | — | Maps to `eventCategory` |
+| `gaAction` | `string` | — | Maps to `eventAction` |
+| `gaLabel` | `string` | — | Maps to `eventLabel` |
+
+### Custom properties
+
+The second argument (`customProperties`) is merged directly into the dataLayer push and accepts any flat or one-level-deep values:
+
+```ts
+type GoogleAnalyticsCustomProperties = {
+  [key: string]:
+    | { [key: string]: string | number | boolean | undefined }
+    | string
+    | number
+    | boolean
+    | undefined;
+};
+```
+
+Pass extra fields like `userId`, `plan`, or any GTM variable you need alongside the standard event fields.
+
+---
+
 ## Available Functions
 
-### Analytics Functions (GDPR-Compliant)
+### Amplitude Functions (GDPR-Compliant)
 
-All analytics functions automatically respect Cookiebot consent. If the user hasn't consented to analytics cookies, these functions will silently skip tracking:
+All Amplitude functions automatically respect Cookiebot consent. If the user hasn't consented to analytics cookies, these functions will silently skip tracking:
 
 **Via `useAnalytics` hook:**
 -   `trackEvent(eventName, eventProperties)`: Track custom events
@@ -157,6 +233,14 @@ All analytics functions automatically respect Cookiebot consent. If the user has
 - `trackCTAClick(ctaPosition, ctaText)`
 - `setUserId(userId)`
 - `setUserProperties(properties)`
+
+### Google Analytics Functions (GDPR-Compliant)
+
+**Via `useGoogleAnalytics` hook:**
+- `sendGAEvent(data, customProperties?)`: Push an event to `window.dataLayer`
+
+**Direct import:**
+- `sendEventToGoogleAnalytics(data, customProperties?)`
 
 ### Consent Management Functions
 
@@ -348,3 +432,7 @@ function MyPage() {
 ```
 
 This approach allows you to keep your analytics logic encapsulated while providing a convenient, trackable link component for Next.js projects.
+
+## For maintainers
+
+Release workflow (recommended: **`./release.sh`** for version bump, tag, and push): see **[docs/RELEASE.md](docs/RELEASE.md)**.

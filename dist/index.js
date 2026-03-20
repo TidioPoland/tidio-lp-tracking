@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.onConsentChanged = exports.getConsentId = exports.isCookiebotLoaded = exports.hasPreferencesConsent = exports.hasMarketingConsent = exports.hasAnalyticsConsent = exports.setUserProperties = exports.setUserId = exports.trackCTAClick = exports.trackPageView = exports.track = exports.CookiebotStyleProvider = exports.CookiebotScript = exports.useAnalytics = exports.AnalyticsProvider = void 0;
+exports.sendEventToGoogleAnalytics = exports.useGoogleAnalytics = exports.onConsentChanged = exports.getConsentId = exports.isCookiebotLoaded = exports.hasPreferencesConsent = exports.hasMarketingConsent = exports.hasAnalyticsConsent = exports.setUserProperties = exports.setUserId = exports.trackCTAClick = exports.trackPageView = exports.track = exports.CookiebotStyleProvider = exports.CookiebotScript = exports.useAnalytics = exports.AnalyticsProvider = void 0;
 var AnalyticsProvider_1 = require("./AnalyticsProvider");
 Object.defineProperty(exports, "AnalyticsProvider", { enumerable: true, get: function () { return AnalyticsProvider_1.AnalyticsProvider; } });
 var useAnalytics_1 = require("./useAnalytics");
@@ -22,3 +22,7 @@ Object.defineProperty(exports, "hasPreferencesConsent", { enumerable: true, get:
 Object.defineProperty(exports, "isCookiebotLoaded", { enumerable: true, get: function () { return cookiebot_1.isCookiebotLoaded; } });
 Object.defineProperty(exports, "getConsentId", { enumerable: true, get: function () { return cookiebot_1.getConsentId; } });
 Object.defineProperty(exports, "onConsentChanged", { enumerable: true, get: function () { return cookiebot_1.onConsentChanged; } });
+var useGoogleAnalytics_1 = require("./useGoogleAnalytics");
+Object.defineProperty(exports, "useGoogleAnalytics", { enumerable: true, get: function () { return useGoogleAnalytics_1.useGoogleAnalytics; } });
+var googleAnalytics_1 = require("./googleAnalytics");
+Object.defineProperty(exports, "sendEventToGoogleAnalytics", { enumerable: true, get: function () { return googleAnalytics_1.sendEventToGoogleAnalytics; } });

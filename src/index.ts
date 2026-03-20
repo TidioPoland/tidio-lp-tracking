@@ -17,3 +17,9 @@ export {
     getConsentId,
     onConsentChanged
 } from "./cookiebot";
+export { useGoogleAnalytics } from "./useGoogleAnalytics";
+export {
+    sendEventToGoogleAnalytics,
+    type GoogleAnalyticsEventData,
+    type GoogleAnalyticsCustomProperties,
+} from "./googleAnalytics";
