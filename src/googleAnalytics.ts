@@ -40,11 +40,13 @@ export const sendEventToGoogleAnalytics = (
 
     window.dataLayer = window.dataLayer || [];
 
-    window.dataLayer.push({
+    const payload: Record<string, unknown> = {
         event: data.gaEvent,
-        eventCategory: data.gaCategory,
-        eventAction: data.gaAction,
-        eventLabel: data.gaLabel,
+        ...(data.gaCategory !== undefined && { eventCategory: data.gaCategory }),
+        ...(data.gaAction !== undefined && { eventAction: data.gaAction }),
+        ...(data.gaLabel !== undefined && { eventLabel: data.gaLabel }),
         ...customProperties,
-    });
+    };
+
+    window.dataLayer.push(payload);
 };

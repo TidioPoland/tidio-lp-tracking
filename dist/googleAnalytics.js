@@ -11,6 +11,7 @@ const sendEventToGoogleAnalytics = (data, customProperties) => {
         return;
     }
     window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push(Object.assign({ event: data.gaEvent, eventCategory: data.gaCategory, eventAction: data.gaAction, eventLabel: data.gaLabel }, customProperties));
+    const payload = Object.assign(Object.assign(Object.assign(Object.assign({ event: data.gaEvent }, (data.gaCategory !== undefined && { eventCategory: data.gaCategory })), (data.gaAction !== undefined && { eventAction: data.gaAction })), (data.gaLabel !== undefined && { eventLabel: data.gaLabel })), customProperties);
+    window.dataLayer.push(payload);
 };
 exports.sendEventToGoogleAnalytics = sendEventToGoogleAnalytics;
