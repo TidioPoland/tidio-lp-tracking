@@ -30,9 +30,9 @@ npm version "$VERSION" --no-git-tag-version
 echo "🔨 Building package..."
 npm run build
 
-# Stage version bump and compiled output (see package.json "version" script)
+# Stage version bump, lockfile (npm version updates both), and compiled output
 echo "💾 Committing version bump..."
-git add package.json dist
+git add package.json package-lock.json dist
 git commit -m "chore: bump version to v$VERSION"
 
 # Create and push tag

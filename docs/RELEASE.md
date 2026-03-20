@@ -37,9 +37,9 @@ chmod +x ./release.sh   # once, if needed
 
 What `release.sh` does:
 
-1. Sets the version in `package.json` (`npm version … --no-git-tag-version`, which also runs the `version` script: build + stage `dist`)  
+1. Sets the version in `package.json` and `package-lock.json` (`npm version … --no-git-tag-version`, which also runs the `version` script: build + stage `dist`)  
 2. Runs `npm run build` again so `dist/` matches the release  
-3. Commits **`package.json` + `dist/`** with `chore: bump version to vX.Y.Z`  
+3. Commits **`package.json` + `package-lock.json` + `dist/`** with `chore: bump version to vX.Y.Z`  
 4. Creates tag `vX.Y.Z`  
 5. Pushes the **current branch** to `origin` and pushes the tag (`git push origin vX.Y.Z`)
 
@@ -59,6 +59,7 @@ npm install "github:TidioPoland/tidio-lp-tracking#v0.2.2"
 1. Feature changes in `src/` are merged or committed.  
 2. **`npm run build`** succeeds.  
 3. Your feature commit includes **updated `dist/`** (this package ships compiled output).  
+   After `./release.sh`, **`package-lock.json`** on `origin` should match `package.json` (the script stages all three).  
 4. `README.md` / types updated if the public API changed.
 
 ---
