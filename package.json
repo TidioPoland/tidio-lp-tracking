@@ -1,6 +1,6 @@
 {
   "name": "@TidioPoland/tidio-lp-tracking",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "Reusable Amplitude analytics module for Tidio projects.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
