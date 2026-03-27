@@ -23,3 +23,14 @@ export {
     type GoogleAnalyticsEventData,
     type GoogleAnalyticsCustomProperties,
 } from "./googleAnalytics";
+export {
+    Utm,
+    getSearchParam,
+    getUtmParams,
+    getReferringDomain,
+    getReferrerWithoutProtocol,
+    getLanguage,
+    getDefaultEventProperties,
+    getCategoryFromDomain,
+    getBreakpoint,
+} from "./utils";

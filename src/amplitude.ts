@@ -1,5 +1,5 @@
 import { createInstance, Types, Identify } from '@amplitude/analytics-browser';
-import {getBreakpoint, getCategoryFromDomain} from "./utils";
+import { getDefaultEventProperties } from "./utils";
 import { hasAnalyticsConsent } from "./cookiebot";
 
 // Store the Amplitude instance globally
@@ -55,7 +55,6 @@ export const amplitudeInit = (apiKey?: string, logLevel?: Types.LogLevel) => {
 // Helper to track events
 export const track = (eventName: string, eventProperties?: Record<string, any>) => {
     if (typeof window !== 'undefined') {
-        // Check for analytics consent before tracking
         if (!hasAnalyticsConsent()) {
             console.debug("Analytics consent not granted. Skipping event tracking:", eventName);
             return;
@@ -63,20 +62,10 @@ export const track = (eventName: string, eventProperties?: Record<string, any>) 
 
         const instance = amplitudeInit();
         if (instance) {
-            const defaultProperties = {
-                category: getCategoryFromDomain(),
-                page_path: window.location.pathname,
-                page_url: window.location.href,
-                referrer: document.referrer || undefined, // Ensure referrer is string or undefined
-                breakpoint: getBreakpoint()
-            };
-
-            const finalEventProperties = {
-                ...defaultProperties,
-                ...eventProperties
-            };
-
-            instance.track(eventName, finalEventProperties);
+            instance.track(eventName, {
+                ...getDefaultEventProperties(),
+                ...eventProperties,
+            });
         } else {
             console.warn("Amplitude instance not available for tracking event:", eventName);
         }
@@ -86,29 +75,14 @@ export const track = (eventName: string, eventProperties?: Record<string, any>) 
 // Track page view event
 export const trackPageView = () => {
     if (typeof window !== 'undefined') {
-        // Check for analytics consent before tracking
         if (!hasAnalyticsConsent()) {
             console.debug("Analytics consent not granted. Skipping page view tracking.");
             return;
         }
 
         const instance = amplitudeInit();
-
         if (instance) {
-            // Get current page information
-            const pagePath = window.location.pathname;
-            const pageUrl = window.location.href;
-            const referrer = document.referrer;
-
-            const eventProperties = {
-                category: getCategoryFromDomain(),
-                page_path: pagePath,
-                page_url: pageUrl,
-                referrer: referrer,
-                breakpoint: getBreakpoint()
-            };
-
-            instance.track("Homepage: Page Opened", eventProperties);
+            instance.track("Homepage: Page Opened", getDefaultEventProperties());
         }
     }
 };
@@ -153,7 +127,6 @@ export const setUserProperties = (properties: Record<string, any>) => {
 // Track CTA click event
 export const trackCTAClick = (ctaPosition: string, ctaText: string) => {
     if (typeof window !== 'undefined') {
-        // Check for analytics consent before tracking
         if (!hasAnalyticsConsent()) {
             console.debug("Analytics consent not granted. Skipping CTA click tracking.");
             return;
@@ -161,20 +134,11 @@ export const trackCTAClick = (ctaPosition: string, ctaText: string) => {
 
         const instance = amplitudeInit();
         if (instance) {
-            const pagePath = window.location.pathname;
-            const pageUrl = window.location.href;
-            const referrer = document.referrer;
-
-            const eventProperties = {
-                category: getCategoryFromDomain(),
-                page_path: pagePath,
-                page_url: pageUrl,
-                referrer: referrer,
+            instance.track("Homepage: CTA Clicked", {
+                ...getDefaultEventProperties(),
                 cta_position: ctaPosition,
-                cta_text: ctaText
-            };
-
-            instance.track("Homepage: CTA Clicked", eventProperties);
+                cta_text: ctaText,
+            });
         }
     }
 };
